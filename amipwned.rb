@@ -3,6 +3,8 @@ require 'io/console'
 require 'net/http'
 require 'optparse'
 
+VERSION = '0.2.0'
+
 class CommandParser
   class Options
     attr_accessor :password
@@ -23,8 +25,13 @@ class CommandParser
           @options.password = password
         end
 
-        opts.on('-h', '--help', 'Prints this help') do
+        opts.on_tail('-h', '--help', 'Show this message') do
           puts opts
+          exit
+        end
+
+        opts.on_tail('-v', '--version', 'Print version') do
+          puts VERSION
           exit
         end
       end
