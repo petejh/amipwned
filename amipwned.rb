@@ -3,27 +3,41 @@ require 'io/console'
 require 'net/http'
 require 'optparse'
 
+class CommandParser
+  class Options
+    attr_accessor :password
+  end
+
+  class << self
+    def parse(args)
+      @options = Options.new
+      option_parser.parse! args
+      @options
+    end
+
+    def option_parser
+      @parser = OptionParser.new do |opts|
+        opts.banner = "Usage: ruby amipwned.rb [options]"
+
+        opts.on('-p PASSWORD', '--password', 'Password to check') do |password|
+          @options.password = password
+        end
+
+        opts.on('-h', '--help', 'Prints this help') do
+          puts opts
+          exit
+        end
+      end
+    end
+  end
+end
+
 def prompt_for_password
   IO.console.getpass "Enter a password to check: "
 end
 
-options = {}
-option_parser = OptionParser.new do |opts|
-  opts.banner = "Usage: ruby amipwned.rb [options]"
-
-  opts.on('-pPASSWORD', '--password=PASSWORD', 'Password to check') do |password|
-    options[:password] = password
-  end
-
-  opts.on('-h', '--help', 'Prints this help') do
-    puts opts
-    exit
-  end
-end
-
-option_parser.parse!
-
-password = options[:password] || prompt_for_password
+options = CommandParser.parse ARGV
+password = options.password || prompt_for_password
 
 password_hash = Digest::SHA1.hexdigest(password).upcase
 
