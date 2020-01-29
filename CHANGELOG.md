@@ -7,6 +7,8 @@ This project uses [Semantic Versioning][sv].
 
 ### Added
 - Wrap the code in a top-level namespace, `AmIPwned`.
+- Create the `HashedPassword` class to encapsulate details of the k-anonymity
+  model.
 
 ## [0.2.0][0.2.0] — 2020-01-28
 

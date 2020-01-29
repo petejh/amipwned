@@ -59,24 +59,42 @@ module AmIPwned
     end
   end
 
+  class HashedPassword
+    attr_reader :hashed_password
+
+    PREFIX_LENGTH = 5
+
+    def initialize(password)
+      @hashed_password = hash(password)
+    end
+
+    def hash(password)
+      Digest::SHA1.hexdigest(password).upcase
+    end
+
+    def head
+      hashed_password[0..(PREFIX_LENGTH - 1)]
+    end
+
+    def tail
+      hashed_password[PREFIX_LENGTH..-1]
+    end
+  end
+
   def prompt_for_password
     IO.console.getpass "Enter a password to check: "
   end
 
   options = CommandParser.parse ARGV
   password = options.password || prompt_for_password
+  hashed_password = HashedPassword.new(password)
 
-  password_hash = Digest::SHA1.hexdigest(password).upcase
-
-  head = password_hash[0..4]
-  tail = password_hash[5..-1]
-
-  uri = URI("https://api.pwnedpasswords.com/range/#{head}")
+  uri = URI("https://api.pwnedpasswords.com/range/#{hashed_password.head}")
   response = Net::HTTP.get_response(uri)
 
   puts "server responded: #{response.code}"
   response.body.each_line do |line|
     hash, count = line.chomp.split(':')
-    puts "#{password} was found #{count} times!" if hash == tail
+    puts "#{password} was found #{count} times!" if hash == hashed_password.tail
   end
 end
