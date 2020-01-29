@@ -6,31 +6,50 @@ require 'optparse'
 VERSION = '0.2.0'
 
 class CommandParser
-  class Options
+  class CommandOptions
     attr_accessor :password
   end
 
   class << self
     def parse(args)
-      @options = Options.new
+      @options = CommandOptions.new
       option_parser.parse! args
       @options
     end
 
     def option_parser
       @parser = OptionParser.new do |opts|
-        opts.banner = "Usage: ruby amipwned.rb [options]"
+        program_name = File.basename($PROGRAM_NAME)
 
-        opts.on('-p PASSWORD', '--password', 'Password to check') do |password|
+        opts.banner = <<~BANNER
+          Usage: ruby #{program_name} [options]
+
+          Validate a given password against a public database of known data breaches.
+
+          By default, the program will prompt for a password to test, although you
+          may supply one on the command line if you are not concerned about leaking
+          secrets into the command history log. The password is never otherwise saved
+          to persistent storage.
+
+          Using a k-anonymity model, only a short prefix of the hashed password is
+          shared with the database. The database service never gains enough information
+          about the password to be able to exploit it later.
+        BANNER
+        opts.separator ''
+
+        opts.separator 'Options:'
+        opts.on( '-p PASSWORD', '--password',
+                 'Password to validate against data breaches') do |password|
           @options.password = password
         end
 
-        opts.on_tail('-h', '--help', 'Show this message') do
+        opts.separator ''
+        opts.on_tail('-h', '--help', 'Display this help and exit') do
           puts opts
           exit
         end
 
-        opts.on_tail('-v', '--version', 'Print version') do
+        opts.on_tail('-v', '--version', 'Print version information and exit') do
           puts VERSION
           exit
         end
