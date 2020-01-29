@@ -5,6 +5,9 @@ This project uses [Semantic Versioning][sv].
 
 ## [Unreleased][new]
 
+### Added
+- Wrap the code in a top-level namespace, `AmIPwned`.
+
 ## [0.2.0][0.2.0] — 2020-01-28
 
 ### Added
