@@ -59,36 +59,40 @@ module AmIPwned
     end
   end
 
-  class HashedPassword
-    attr_reader :hashed_password
-
+  module PwnedPasswords
     PREFIX_LENGTH = 5
 
-    def initialize(password)
-      @hashed_password = hash(password)
+    class HashedPassword
+      attr_reader :hashed_password
+
+      def initialize(password)
+        @hashed_password = hash(password)
+      end
+
+      def hash(password)
+        Digest::SHA1.hexdigest(password).upcase
+      end
+
+      def head
+        hashed_password[0..(PREFIX_LENGTH - 1)]
+      end
+
+      def tail
+        hashed_password[PREFIX_LENGTH..-1]
+      end
     end
 
-    def hash(password)
-      Digest::SHA1.hexdigest(password).upcase
-    end
+    class API
+      API_BASE_URL = "https://api.pwnedpasswords.com"
 
-    def head
-      hashed_password[0..(PREFIX_LENGTH - 1)]
-    end
+      class << self
+        def validate(partial_hash)
+          uri = URI("#{API_BASE_URL}/range/#{partial_hash}")
 
-    def tail
-      hashed_password[PREFIX_LENGTH..-1]
-    end
-  end
+          response = Net::HTTP.get_response(uri)
 
-  class PwnedPasswords
-    API_BASE_URL = "https://api.pwnedpasswords.com"
-
-    class << self
-      def validate(partial_hash)
-        uri = URI("#{API_BASE_URL}/range/#{partial_hash}")
-        response = Net::HTTP.get_response(uri)
-        response.body.lines(chomp: true).map { |line| line.split(':') }.to_h
+          response.body.lines(chomp: true).map { |line| line.split(':') }.to_h
+        end
       end
     end
   end
@@ -99,9 +103,9 @@ module AmIPwned
 
   options = CommandParser.parse ARGV
   password = options.password || prompt_for_password
-  hashed_password = HashedPassword.new(password)
+  hashed_password = PwnedPasswords::HashedPassword.new(password)
 
-  potential_matches = PwnedPasswords.validate(hashed_password.head)
+  potential_matches = PwnedPasswords::API.validate(hashed_password.head)
 
   puts "#{password} was found #{potential_matches[hashed_password.tail]} times!"
 end

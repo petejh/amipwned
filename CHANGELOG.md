@@ -7,10 +7,11 @@ This project uses [Semantic Versioning][sv].
 
 ### Added
 - Wrap the code in a top-level namespace, `AmIPwned`.
+- Add module `PwnedPasswords` to encapsulate details of the API that serves the
+  known breach data.
 - Create the `HashedPassword` class to encapsulate details of the k-anonymity
   model.
-- Create the `PwnedPassword` class to encapsulate details of the API that
-  serves the known breach data.
+- Create the `API` class to handle networking details for `PwnedPasswords`.
 
 ## [0.2.0][0.2.0] — 2020-01-28
 
