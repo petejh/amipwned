@@ -81,6 +81,18 @@ module AmIPwned
     end
   end
 
+  class PwnedPasswords
+    API_BASE_URL = "https://api.pwnedpasswords.com"
+
+    class << self
+      def validate(partial_hash)
+        uri = URI("#{API_BASE_URL}/range/#{partial_hash}")
+        response = Net::HTTP.get_response(uri)
+        response.body.lines(chomp: true).map { |line| line.split(':') }.to_h
+      end
+    end
+  end
+
   def prompt_for_password
     IO.console.getpass "Enter a password to check: "
   end
@@ -89,12 +101,7 @@ module AmIPwned
   password = options.password || prompt_for_password
   hashed_password = HashedPassword.new(password)
 
-  uri = URI("https://api.pwnedpasswords.com/range/#{hashed_password.head}")
-  response = Net::HTTP.get_response(uri)
+  potential_matches = PwnedPasswords.validate(hashed_password.head)
 
-  puts "server responded: #{response.code}"
-  response.body.each_line do |line|
-    hash, count = line.chomp.split(':')
-    puts "#{password} was found #{count} times!" if hash == hashed_password.tail
-  end
+  puts "#{password} was found #{potential_matches[hashed_password.tail]} times!"
 end
