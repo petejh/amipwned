@@ -21,7 +21,7 @@ Clone the repository to your local machine:
 ## Usage
 Print detailed documentation for command line options with:
 ```bash
-~$ ruby amipwned.rb --help
+~$ amipwned.rb --help
 ```
 
 ## Contributing

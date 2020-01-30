@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'digest'
 require 'io/console'
 require 'net/http'
