@@ -5,6 +5,9 @@ This project uses [Semantic Versioning][sv].
 
 ## [Unreleased][new]
 
+### Added
+- Create the `CLI` class to wrangle, well... the command line interface.
+
 ## [0.3.0][0.3.0] — 2020-01-30
 
 ### Added

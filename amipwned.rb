@@ -112,13 +112,23 @@ module AmIPwned
     end
   end
 
-  def prompt_for_password
-    IO.console.getpass "Enter a password to check: "
+  class CLI
+    class << self
+      def run(args)
+        options = CommandParser.parse(args)
+        password = options.password || prompt_for_password
+        hashed_password = PwnedPasswords::Password.new(password)
+
+        puts "#{password} was found #{hashed_password.pwned_count || 0} times!"
+      end
+
+      private
+
+      def prompt_for_password
+        IO.console.getpass "Enter a password to check: "
+      end
+    end
   end
 
-  options = CommandParser.parse ARGV
-  password = options.password || prompt_for_password
-  hashed_password = PwnedPasswords::Password.new(password)
-
-  puts "#{password} was found #{hashed_password.pwned_count || 0} times!"
+  CLI.run(ARGV)
 end
