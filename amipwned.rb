@@ -62,23 +62,32 @@ module AmIPwned
   module PwnedPasswords
     PREFIX_LENGTH = 5
 
-    class HashedPassword
-      attr_reader :hashed_password
-
+    class Password
       def initialize(password)
-        @hashed_password = hash(password)
+        @hashed = hash(password)
       end
+
+      def pwned?
+        pwned_count > 0
+      end
+
+      def pwned_count
+        API.validate(head)[tail]
+      end
+
+      private
+      attr_reader :hashed
 
       def hash(password)
         Digest::SHA1.hexdigest(password).upcase
       end
 
       def head
-        hashed_password[0..(PREFIX_LENGTH - 1)]
+        hashed[0..(PREFIX_LENGTH - 1)]
       end
 
       def tail
-        hashed_password[PREFIX_LENGTH..-1]
+        hashed[PREFIX_LENGTH..-1]
       end
     end
 
@@ -103,9 +112,7 @@ module AmIPwned
 
   options = CommandParser.parse ARGV
   password = options.password || prompt_for_password
-  hashed_password = PwnedPasswords::HashedPassword.new(password)
+  hashed_password = PwnedPasswords::Password.new(password)
 
-  potential_matches = PwnedPasswords::API.validate(hashed_password.head)
-
-  puts "#{password} was found #{potential_matches[hashed_password.tail]} times!"
+  puts "#{password} was found #{hashed_password.pwned_count || 0} times!"
 end
