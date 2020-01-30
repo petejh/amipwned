@@ -72,7 +72,7 @@ module AmIPwned
       end
 
       def pwned_count
-        API.validate(head)[tail]
+        APIv2.potential_matches(head)[tail]
       end
 
       private
@@ -91,16 +91,22 @@ module AmIPwned
       end
     end
 
-    class API
+    class APIv2
       API_BASE_URL = "https://api.pwnedpasswords.com"
 
       class << self
-        def validate(partial_hash)
+        def potential_matches(partial_hash)
+          query_range(partial_hash).map { |line| line.split(':') }.to_h
+        end
+
+        private
+
+        def query_range(partial_hash)
           uri = URI("#{API_BASE_URL}/range/#{partial_hash}")
 
           response = Net::HTTP.get_response(uri)
 
-          response.body.lines(chomp: true).map { |line| line.split(':') }.to_h
+          response.body.lines(chomp: true)
         end
       end
     end
