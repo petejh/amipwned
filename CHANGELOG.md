@@ -7,7 +7,10 @@ This project uses [Semantic Versioning][sv].
 
 ### Added
 - Create the `CLI` class to wrangle, well... the command line interface.
-- Add a shebang line to invoke ruby
+
+### Changed
+- Add a shebang line to invoke ruby.
+- Only print the password in the results when the `-s|--show` flag is given.
 
 ## [0.3.0][0.3.0] — 2020-01-30
 

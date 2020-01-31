@@ -10,7 +10,7 @@ module AmIPwned
 
   class CommandParser
     class CommandOptions
-      attr_accessor :password
+      attr_accessor :password, :show
     end
 
     class << self
@@ -32,7 +32,7 @@ module AmIPwned
             By default, the program will prompt for a password to test, although you
             may supply one on the command line if you are not concerned about leaking
             secrets into the command history log. The password is never otherwise saved
-            to persistent storage.
+            to persistent storage, and will not be printed in the results by default.
 
             Using a k-anonymity model, only a short prefix of the hashed password is
             shared with the database. The database service never gains enough information
@@ -41,9 +41,12 @@ module AmIPwned
           opts.separator ''
 
           opts.separator 'Options:'
-          opts.on( '-p PASSWORD', '--password',
-                   'Password to validate against data breaches') do |password|
+          opts.on('-p PASSWORD', '--password',
+                  'Password to validate against data breaches') do |password|
             @options.password = password
+          end
+          opts.on('-s', '--show', 'Show the plaintext password in the results') do
+            @options.show = true
           end
 
           opts.separator ''
@@ -74,7 +77,7 @@ module AmIPwned
       end
 
       def pwned_count
-        APIv2.potential_matches(head)[tail]
+        APIv2.potential_matches(head)[tail] || 0
       end
 
       private
@@ -121,7 +124,9 @@ module AmIPwned
         password = options.password || prompt_for_password
         hashed_password = PwnedPasswords::Password.new(password)
 
-        puts "#{password} was found #{hashed_password.pwned_count || 0} times!"
+        password_text = options.show ? password : "The password"
+
+        puts "#{password_text} was found #{hashed_password.pwned_count} times!"
       end
 
       private

@@ -5,7 +5,7 @@ known data breaches.
 By default, the program will prompt for a password to test, although you may
 supply one on the command line if you are not concerned about leaking secrets
 into the command history log. The password is never otherwise saved to
-persistent storage.
+persistent storage, and will not be printed in the results by default.
 
 Using a k-anonymity model, only a short prefix of the hashed password is shared
 with the database. The database service never gains enough information about the
