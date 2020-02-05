@@ -6,7 +6,7 @@ require 'net/http'
 require 'optparse'
 
 module AmIPwned
-  VERSION = '0.3.0'
+  VERSION = '0.4.0'
 
   class CommandParser
     class CommandOptions
@@ -25,7 +25,7 @@ module AmIPwned
           program_name = File.basename($PROGRAM_NAME)
 
           opts.banner = <<~BANNER
-            Usage: ruby #{program_name} [options]
+            Usage: #{program_name} [options]
 
             Validate a given password against a public database of known data breaches.
 

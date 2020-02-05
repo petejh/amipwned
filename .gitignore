@@ -1,0 +1,23 @@
+# bundler binstubs
+/bin/*
+!/bin/console
+!/bin/setup
+
+# local environment
+/.bundle/
+
+# build artifacts
+/pkg/
+
+# scratch files
+/tmp/
+
+# auto-generated documentation
+/.yardoc
+/_yardoc/
+/doc/
+
+# test reports
+.rspec_status
+/coverage/
+/spec/reports/

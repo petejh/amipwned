@@ -17,11 +17,21 @@ Clone the repository to your local machine:
 ```bash
 ~$ git clone https://github.com/petejh/amipwned.git
 ```
+For convenience, you can move or symlink `amipwned.rb` anywhere in your `$PATH.`
 
 ## Usage
 Print detailed documentation for command line options with:
 ```bash
 ~$ amipwned.rb --help
+
+Usage: amipwned.rb [options]
+...
+Options:
+    -p, --password PASSWORD          Password to validate against data breaches
+    -s, --show                       Show the plaintext password in the results
+
+    -h, --help                       Display this help and exit
+    -v, --version                    Print version information and exit
 ```
 
 ## Contributing
